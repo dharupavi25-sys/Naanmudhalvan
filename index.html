@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html ng-app="userApp">
+<head>
+  <meta charset="UTF-8">
+  <title>User Registration</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body ng-controller="userController">
+  <div class="container">
+    <h2>User Registration</h2>
+
+    <form name="userForm" ng-submit="register()" novalidate>
+
+      <!-- Name -->
+      <label>Name</label>
+      <input type="text" name="name" ng-model="user.name" ng-required="true" />
+      <span class="error" ng-show="userForm.name.$touched && userForm.name.$error.required">
+        Name is required.
+      </span>
+
+      <!-- Email -->
+      <label>Email</label>
+      <input type="email" name="email" ng-model="user.email" ng-required="true" />
+      <span class="error" ng-show="userForm.email.$touched && userForm.email.$error.required">
+        Email is required.
+      </span>
+      <span class="error" ng-show="userForm.email.$touched && userForm.email.$error.email">
+        Invalid email format.
+      </span>
+
+      <!-- Password -->
+      <label>Password</label>
+      <input type="{{showPassword ? 'text' : 'password'}}" name="password"
+             ng-model="user.password"
+             ng-change="checkStrength(user.password)"
+             ng-required="true"
+             ng-minlength="6"
+             ng-pattern="/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/"/>
+
+      <!-- Show/Hide Password -->
+      <span class="password-toggle" ng-click="togglePassword()">
+        {{ showPassword ? 'Hide Password' : 'Show Password' }}
+      </span>
+
+      <!-- Password Strength Indicator -->
+      <div ng-if="passwordStrength" class="strength-bar strength-{{passwordStrength}}"></div>
+      <small ng-if="passwordStrength" class="strength-label">Strength: {{ passwordStrength }}</small>
+
+      <span class="error" ng-show="userForm.password.$touched && userForm.password.$error.required">
+        Password is required.
+      </span>
+      <span class="error" ng-show="userForm.password.$error.minlength">
+        Minimum 6 characters required.
+      </span>
+      <span class="error" ng-show="userForm.password.$error.pattern">
+        Must contain at least one letter and one number.
+      </span>
+
+      <!-- Confirm Password -->
+      <label>Confirm Password</label>
+      <input type="{{showPassword ? 'text' : 'password'}}" name="confirmPassword"
+             ng-model="user.confirmPassword" ng-required="true" />
+      <span class="error" ng-show="user.confirmPassword !== user.password && userForm.confirmPassword.$touched">
+        Passwords do not match.
+      </span>
+
+      <!-- Remember Me -->
+      <label class="remember">
+        <input type="checkbox" ng-model="user.remember"> Remember Me
+      </label>
+
+      <!-- Buttons -->
+      <button type="submit" ng-disabled="userForm.$invalid || user.password !== user.confirmPassword">
+        Register
+      </button>
+      <button type="button" ng-click="resetForm()">Reset Form</button>
+    </form>
+
+    <p class="success" ng-if="successMessage">{{ successMessage }}</p>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
