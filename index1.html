@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="userApp">
+<head>
+    <meta charset="UTF-8">
+    <title>User Validation Form</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <style>
+        .ng-invalid.ng-touched { border-color: red; }
+        .error { color: red; font-size: 0.9em; }
+        .password-strength { padding: 2px 5px; border-radius: 3px; font-weight: bold; }
+        .weak { background-color: #ffcccc; color: red; }
+        .medium { background-color: #ffffcc; color: orange; }
+        .strong { background-color: #ccffcc; color: green; }
+    </style>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body ng-controller="UserFormController">
+
+    <h2>User Registration</h2>
+    <form name="userForm" ng-submit="submitForm(userForm.$valid)" novalidate>
+
+        <label for="name">Name:</label><br>
+        <input type="text" id="name" name="name" ng-model="user.name" ng-required="true"><br>
+        <div ng-messages="userForm.name.$error" ng-if="userForm.name.$touched">
+            <p ng-message="required" class="error">Name is required.</p>
+        </div>
+        <br>
+
+        <label for="email">Email:</label><br>
+        <input type="email" id="email" name="email" ng-model="user.email" ng-required="true"
+               ng-pattern="/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$"><br>
+        <div ng-messages="userForm.email.$error" ng-if="userForm.email.$touched">
+            <p ng-message="required" class="error">Email is required.</p>
+            <p ng-message="pattern" class="error">Invalid email format (e.g., user@domain.com).</p>
+        </div>
+        <br>
+
+        <label for="password">Password:</label><br>
+        <input type="{{ passwordFieldType }}" id="password" name="password" ng-model="user.password"
+               ng-required="true" ng-minlength="8" ng-pattern="/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$"
+               ng-change="checkPasswordStrength()"><br>
+        <button type="button" ng-click="togglePasswordVisibility()">{{ passwordButtonText }} Password</button>
+        <span ng-class="strengthClass" class="password-strength" ng-if="user.password">{{ strengthText }}</span>
+        <div ng-messages="userForm.password.$error" ng-if="userForm.password.$touched">
+            <p ng-message="required" class="error">Password is required.</p>
+            <p ng-message="minlength" class="error">Password must be at least 8 characters long.</p>
+            <p ng-message="pattern" class="error">Weak password: Must contain at least one letter and one number.</p>
+        </div>
+        <br>
+
+        <label for="confirmPassword">Confirm Password:</label><br>
+        <input type="{{ passwordFieldType }}" id="confirmPassword" name="confirmPassword" ng-model="user.confirmPassword"
+               ng-required="true" compare-to="user.password"><br>
+        <div ng-messages="userForm.confirmPassword.$error" ng-if="userForm.confirmPassword.$touched">
+            <p ng-message="required" class="error">Confirmation is required.</p>
+            <p ng-message="compareTo" class="error">Password and Confirm Password must match.</p>
+        </div>
+        <br>
+
+        <input type="checkbox" id="rememberMe" ng-model="rememberMe">
+        <label for="rememberMe">Remember Me</label>
+        <br><br>
+
+        <button type="submit" ng-disabled="userForm.$invalid">Register</button>
+        <button type="button" ng-click="resetForm(userForm)">Reset Form</button>
+
+    </form>
+
+    <script src="app.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-messages.min.js"></script>
+</body>
+</html>
